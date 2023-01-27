@@ -24,6 +24,14 @@ contract ERC721TokenProxy is Proxy {
     string private symbol;
     mapping(uint256 => string) private _tokenURIs;
     string private _baseURI;
+    
+    // ERC2981
+    // RoyaltyInfo private _defaultRoyaltyInfo;
+    address private defaultRoyaltyInfoReceiver;
+    uint96 private defaultRoyaltyInfoFraction;
+    mapping(uint256 => uint256) private _tokenRoyaltyInfo;
+
+    // ERC721BridgeToken, ERC721NativeToken
     address private bridgeContract;
     address private _factory;
     uint256 private _id;

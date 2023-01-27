@@ -2,6 +2,7 @@ pragma solidity 0.7.5;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "../common/ERC2981.sol";
 
 import "../interfaces/IOwnable.sol";
 import "../interfaces/IBurnableMintableERC721Token.sol";
@@ -10,7 +11,7 @@ import "../interfaces/IBurnableMintableERC721Token.sol";
  * @title ERC721BridgeToken
  * @dev template token contract for bridged ERC721 tokens.
  */
-contract ERC721BridgeToken is ERC721, IBurnableMintableERC721Token {
+contract ERC721BridgeToken is ERC721, ERC2981, IBurnableMintableERC721Token {
     using Counters for Counters.Counter;
 
     address public bridgeContract;
@@ -52,16 +53,19 @@ contract ERC721BridgeToken is ERC721, IBurnableMintableERC721Token {
      * `interfaceId`. See the corresponding EIP165.
      * @return true, if interface is implemented.
      */
-    function supportsInterface(bytes4 interfaceId) public view override(ERC165, IERC165) returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public view override(ERC2981, ERC165, IERC165) returns (bool) {
         bytes4 INTERFACE_ID_ERC165 = 0x01ffc9a7;
         bytes4 INTERFACE_ID_ERC721 = 0x80ac58cd;
         bytes4 INTERFACE_ID_ERC721_METADATA = 0x5b5e139f;
         bytes4 INTERFACE_ID_ERC721_ENUMERABLE = 0x780e9d63;
+        bytes4 INTERFACE_ID_ERC2981 = 0x2a55205a;
+
         return
             interfaceId == INTERFACE_ID_ERC165 ||
             interfaceId == INTERFACE_ID_ERC721 ||
             interfaceId == INTERFACE_ID_ERC721_METADATA ||
-            interfaceId == INTERFACE_ID_ERC721_ENUMERABLE;
+            interfaceId == INTERFACE_ID_ERC721_ENUMERABLE ||
+            interfaceId == INTERFACE_ID_ERC2981;
     }
 
     /**
@@ -154,5 +158,29 @@ contract ERC721BridgeToken is ERC721, IBurnableMintableERC721Token {
         )
     {
         return (1, 1, 0);
+    }
+
+    function setDefaultRoyalty(address receiver, uint96 feeNumerator) public onlyOwner {
+        _setDefaultRoyalty(receiver, feeNumerator);
+    }
+
+    function deleteDefaultRoyalty() public onlyOwner {
+        _deleteDefaultRoyalty();
+    }
+
+    function setTokenRoyalty(uint256 tokenId, address receiver, uint96 feeNumerator) public onlyOwner {
+        _setTokenRoyalty(tokenId, receiver, feeNumerator);
+    }
+
+    function resetTokenRoyalty(uint256 tokenId) public onlyOwner {
+        _resetTokenRoyalty(tokenId);
+    }
+
+    /**
+     * @dev See {ERC721-_burn}. This override additionally clears the royalty information for the token.
+    */
+    function _burn(uint256 tokenId) internal virtual override {
+        super._burn(tokenId);
+        _resetTokenRoyalty(tokenId);
     }
 }
