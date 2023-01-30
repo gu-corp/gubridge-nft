@@ -98,6 +98,15 @@ contract ERC721NativeToken is ERC721, ERC2981 {
         _resetTokenRoyalty(tokenId);
     }
 
+    function defaultRoyaltyInfo() public view returns(address, uint96) {
+        return (_defaultRoyaltyInfo.receiver, _defaultRoyaltyInfo.royaltyFraction);
+    }
+
+    function royaltyInfoOf(uint256 tokenId) public view returns(address, uint96) {
+        require(_tokenRoyaltyInfo[tokenId]);
+        return (_tokenRoyaltyInfo[tokenId].receiver, _tokenRoyaltyInfo[tokenId].royaltyFraction);
+    }
+
     /**
      * @dev Stub for preventing unneeded storage writes.
      * All supported interfaces are hardcoded in the supportsInterface function.
