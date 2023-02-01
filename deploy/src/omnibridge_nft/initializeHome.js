@@ -10,20 +10,20 @@ function initializeMediator({
     bridgeContract,
     mediatorContract,
     owner,
-    tokenImageERC721,
     tokenImageERC1155,
     gasLimitManager,
     forwardingRulesManager,
+    tokenFactoryERC721,
   },
 }) {
   console.log(`
     AMB contract: ${bridgeContract},
     Mediator contract: ${mediatorContract},
     OWNER: ${owner},
-    ERC721_TOKEN_IMAGE: ${tokenImageERC721},
     ERC1155_TOKEN_IMAGE: ${tokenImageERC1155},
     GAS_LIMIT_MANAGER: ${gasLimitManager},
-    FORWARDING_RULES_MANAGER: ${forwardingRulesManager}
+    FORWARDING_RULES_MANAGER: ${forwardingRulesManager},
+    ERC721_TOKEN_FACTORY: ${tokenFactoryERC721}
     `)
 
   return contract.methods
@@ -32,9 +32,9 @@ function initializeMediator({
       mediatorContract,
       gasLimitManager,
       owner,
-      tokenImageERC721,
       tokenImageERC1155,
-      forwardingRulesManager
+      forwardingRulesManager,
+      tokenFactoryERC721
     )
     .encodeABI()
 }
@@ -46,6 +46,7 @@ async function initialize({
   tokenImageERC1155,
   forwardingRulesManager,
   gasLimitManager,
+  tokenFactoryERC721,
 }) {
   let nonce = await web3Home.eth.getTransactionCount(deploymentAddress)
   const mediatorContract = new web3Home.eth.Contract(HomeNFTOmnibridge.abi, homeBridge)
@@ -62,6 +63,7 @@ async function initialize({
       tokenImageERC721,
       tokenImageERC1155,
       forwardingRulesManager,
+      tokenFactoryERC721,
     },
   })
 

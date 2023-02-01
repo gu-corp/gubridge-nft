@@ -19,7 +19,6 @@ contract HomeNFTOmnibridge is NFTForwardingRulesConnector, SelectorTokenGasLimit
      * @param _mediatorContract the address of the mediator contract on the other network.
      * @param _gasLimitManager the gas limit manager contract address.
      * @param _owner address of the owner of the mediator contract.
-     * @param _imageERC721 address of the ERC721 token image.
      * @param _imageERC1155 address of the ERC1155 token image.
      * @param _forwardingRulesManager address of the NFTForwardingRulesManager contract that will be used for managing lane permissions.
      */
@@ -28,9 +27,9 @@ contract HomeNFTOmnibridge is NFTForwardingRulesConnector, SelectorTokenGasLimit
         address _mediatorContract,
         address _gasLimitManager,
         address _owner,
-        address _imageERC721,
         address _imageERC1155,
-        address _forwardingRulesManager
+        address _forwardingRulesManager,
+        address _factoryERC721
     ) external onlyRelevantSender returns (bool) {
         require(!isInitialized());
 
@@ -38,10 +37,10 @@ contract HomeNFTOmnibridge is NFTForwardingRulesConnector, SelectorTokenGasLimit
         _setMediatorContractOnOtherSide(_mediatorContract);
         _setGasLimitManager(_gasLimitManager);
         _setOwner(_owner);
-        _setTokenImageERC721(_imageERC721);
         _setTokenImageERC1155(_imageERC1155);
         _setForwardingRulesManager(_forwardingRulesManager);
-
+        _setTokenFactoryERC721(_factoryERC721);
+        
         setInitialize();
 
         return isInitialized();

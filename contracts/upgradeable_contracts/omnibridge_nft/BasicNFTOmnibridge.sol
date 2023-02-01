@@ -19,6 +19,8 @@ import "./components/bridged/ERC721TokenProxy.sol";
 import "./components/bridged/ERC1155TokenProxy.sol";
 import "./components/native/NFTMediatorBalanceStorage.sol";
 import "../../tokens/ERC721BridgeToken.sol";
+import "./components/bridged/TokenFactoryStorage.sol";
+import "../../interfaces/IERC721TokenFactory.sol";
 
 /**
  * @title BasicNFTOmnibridge
@@ -37,7 +39,8 @@ abstract contract BasicNFTOmnibridge is
     ERC721Relayer,
     ERC1155Relayer,
     NFTMediatorBalanceStorage,
-    FailedMessagesProcessor
+    FailedMessagesProcessor,
+    TokenFactoryStorage
 {
     using SafeMath for uint256;
 
@@ -82,23 +85,19 @@ abstract contract BasicNFTOmnibridge is
         address _recipient,
         uint256[] calldata _tokenIds,
         uint256[] calldata _values,
-        string[] calldata _tokenURIs
+        string[] calldata _tokenURIs,
+        uint256 _id,
+        address owner_
     ) external onlyMediator {
         address bridgedToken = bridgedTokenAddress(_token);
+
         if (bridgedToken == address(0)) {
-            if (bytes(_name).length == 0) {
-                if (bytes(_symbol).length > 0) {
-                    _name = _transformName(_symbol);
-                }
+            if ( _values.length > 0) {
+                bridgedToken = address(new ERC1155TokenProxy(tokenImageERC1155(), _name, _symbol, address(this)));
             } else {
-                if (bytes(_symbol).length == 0) {
-                    _symbol = _name;
-                }
-                _name = _transformName(_name);
+                address _factory = tokenFactoryERC721();
+                bridgedToken = IERC721TokenFactory(_factory).deployERC721BridgeContract(_name, _symbol, _id, owner_);
             }
-            bridgedToken = _values.length > 0
-                ? address(new ERC1155TokenProxy(tokenImageERC1155(), _name, _symbol, address(this)))
-                : address(new ERC721TokenProxy(tokenImageERC721(), _name, _symbol, address(this)));
             _setTokenAddressPair(_token, bridgedToken);
         }
 
@@ -299,6 +298,8 @@ abstract contract BasicNFTOmnibridge is
 
             string memory name = _readName(_token);
             string memory symbol = _readSymbol(_token);
+            uint256 _id = _readId(_token);
+            address _owner = _readOwner(_token);
 
             return
                 abi.encodeWithSelector(
@@ -309,7 +310,9 @@ abstract contract BasicNFTOmnibridge is
                     _receiver,
                     _tokenIds,
                     _values,
-                    tokenURIs
+                    tokenURIs,
+                    _id,
+                    _owner
                 );
         }
 
