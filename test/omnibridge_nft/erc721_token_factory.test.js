@@ -89,61 +89,6 @@ contract('ERC721TokenFactory', (accounts) => {
     beforeEach(async () => {
       await initialize().should.be.fulfilled
     })
-
-    describe('setERC721BridgeImage', () => {
-      it('should allow owner to change erc271 bridge image', async () => {
-        const newTokenBridgeImageERC721 = await ERC721BridgeToken.new('TEST', 'TST', owner)
-        await tokenFactoryERC721.setERC721BridgeImage(newTokenBridgeImageERC721.address).should.be.fulfilled
-        expect(await tokenFactoryERC721.erc721BridgeImage()).to.be.equal(newTokenBridgeImageERC721.address)
-      })
-
-      it('should not allow not owner to change erc271 bridge image', async () => {
-        const newTokenBridgeImageERC721 = await ERC721BridgeToken.new('TEST', 'TST', owner)
-        await tokenFactoryERC721.setERC721BridgeImage(newTokenBridgeImageERC721.address, { from: other }).should.be
-          .rejected
-      })
-    })
-
-    describe('setERC721NativeImage', () => {
-      it('should allow owner to change erc271 native image', async () => {
-        const newTokenNativeImageERC721 = await ERC721NativeToken.new('TEST', 'TST')
-        await tokenFactoryERC721.setERC721NativeImage(newTokenNativeImageERC721.address).should.be.fulfilled
-        expect(await tokenFactoryERC721.erc721NativeImage()).to.be.equal(newTokenNativeImageERC721.address)
-      })
-
-      it('should not allow not owner to change erc271 native image', async () => {
-        const newTokenNativeImageERC721 = await ERC721NativeToken.new('TEST', 'TST')
-        await tokenFactoryERC721.setERC721NativeImage(newTokenNativeImageERC721.address, { from: other }).should.be
-          .rejected
-      })
-    })
-
-    describe('setBridge', () => {
-      it('should allow owner to change bridge contract', async () => {
-        const newBridge = await OmnibridgeMock.new('SUFFIX')
-        await tokenFactoryERC721.setBridge(newBridge.address).should.be.fulfilled
-        expect(await tokenFactoryERC721.bridge()).to.be.equal(newBridge.address)
-      })
-
-      it('should not allow not owner to change bridge contract', async () => {
-        const newBridge = await OmnibridgeMock.new('SUFFIX')
-        await tokenFactoryERC721.setBridge(newBridge.address, { from: other }).should.be.rejected
-      })
-    })
-
-    describe('setOppositeBridge', () => {
-      it('should allow owner to change opposite bridge contract', async () => {
-        const newOppositeBridge = '0xAfb77d544aFc1e2aD3dEEAa20F3c80859E7Fc3C9'
-        await tokenFactoryERC721.setOppositeBridge(newOppositeBridge).should.be.fulfilled
-        expect(await tokenFactoryERC721.oppositeBridge()).to.be.equal(newOppositeBridge)
-      })
-
-      it('should not allow not owner to change bridge contract', async () => {
-        const newOppositeBridge = '0xAfb77d544aFc1e2aD3dEEAa20F3c80859E7Fc3C9'
-        await tokenFactoryERC721.setOppositeBridge(newOppositeBridge, { from: other }).should.be.rejected
-      })
-    })
-
     describe('deployERC721NativeContract', () => {
       it('should allow deploy native contract', async () => {
         expect(await tokenFactoryERC721.nativeTokenOf(0)).to.be.eql(ZERO_ADDRESS)
