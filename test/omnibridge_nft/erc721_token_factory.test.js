@@ -46,7 +46,7 @@ contract('ERC721TokenFactory', (accounts) => {
     // OmnibridgeMock or ForeignNFTOmnibridge is same
     bridge = await OmnibridgeMock.new('SUFFIX')
     tokenBridgeImageERC721 = await ERC721BridgeToken.new('TEST', 'TST', owner)
-    tokenNativeImageERC721 = await ERC721NativeToken.new('TEST', 'TST')
+    tokenNativeImageERC721 = await ERC721NativeToken.new('TEST', 'TST', owner)
   })
 
   beforeEach(async () => {
@@ -106,13 +106,13 @@ contract('ERC721TokenFactory', (accounts) => {
 
     describe('setERC721NativeImage', () => {
       it('should allow owner to change erc271 native image', async () => {
-        const newTokenNativeImageERC721 = await ERC721NativeToken.new('TEST', 'TST')
+        const newTokenNativeImageERC721 = await ERC721NativeToken.new('TEST', 'TST', owner)
         await tokenFactoryERC721.setERC721NativeImage(newTokenNativeImageERC721.address).should.be.fulfilled
         expect(await tokenFactoryERC721.erc721NativeImage()).to.be.equal(newTokenNativeImageERC721.address)
       })
 
       it('should not allow not owner to change erc271 native image', async () => {
-        const newTokenNativeImageERC721 = await ERC721NativeToken.new('TEST', 'TST')
+        const newTokenNativeImageERC721 = await ERC721NativeToken.new('TEST', 'TST', owner)
         await tokenFactoryERC721.setERC721NativeImage(newTokenNativeImageERC721.address, { from: other }).should.be
           .rejected
       })

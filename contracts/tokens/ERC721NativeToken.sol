@@ -1,11 +1,11 @@
 pragma solidity 0.7.5;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721Burnable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-
 import "../interfaces/IOwnable.sol";
 
-contract ERC721NativeToken is ERC721 {
+contract ERC721NativeToken is ERC721, ERC721Burnable {
     using Counters for Counters.Counter;
 
     address private bridgeContract;
@@ -16,8 +16,10 @@ contract ERC721NativeToken is ERC721 {
 
     constructor(
         string memory _name,
-        string memory _symbol
+        string memory _symbol,
+        address owner_
     ) ERC721(_name, _symbol) {
+        _owner = owner_;
     }
 
     function id() public view returns(uint256) {
