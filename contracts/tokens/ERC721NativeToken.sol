@@ -24,16 +24,6 @@ contract ERC721NativeToken is ERC721 {
         return _id;
     }
 
-    modifier onlyFactory() {
-        require(msg.sender == _factory);
-        _;
-    } 
-
-    modifier onlyFactoryOwner() {
-        require(msg.sender == IOwnable(_factory).owner());
-        _;
-    }
-
     modifier onlyOwner() {
         require(msg.sender == _owner);
         _;
@@ -53,11 +43,6 @@ contract ERC721NativeToken is ERC721 {
 
         _safeMint(_to, _tokenId);
         _setTokenURI(_tokenId, _uri);
-    }
-
-    function setTokenFactory(address factory_) external onlyFactoryOwner {
-        require(_factory != address(0));
-        _factory = factory_;
     }
 
     /**
