@@ -6,8 +6,9 @@ import "../bridged/ERC721TokenProxy.sol";
 import "../../../../tokens/ERC721BridgeToken.sol";
 import "../../../Initializable.sol";
 import "../../../Upgradeable.sol";
+import "../../../Ownable.sol";
 
-contract ERC721TokenFactory is Initializable, Upgradeable {
+contract ERC721TokenFactory is Initializable, Upgradeable, Ownable {
   event ERC721NativeContractCreated(address indexed _collection);
   event ERC721BridgeContractCreated(address indexed _collection);
 
