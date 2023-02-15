@@ -1225,8 +1225,6 @@ function runTests(accounts, isHome) {
             // )
             // expect(oppositeBridge.address).to.eql('0x32cF26d114e5cCEc96B0666185d72a2F32D6A685')
             // await tokenFactoryERC721.transferOwnership(owner, { from: user3 })
-            // await tokenFactoryERC721.setBridge(bridge)
-            // await tokenFactoryERC721.setOppositeBridge(oppositeBridge.address)
             // await tokenFactoryERC721.deployERC721NativeContract('TEST', 'TST')
             // const event = await getEvents(tokenFactoryERC721, { event: 'ERC721NativeContractCreated' })
             // expect(event.length).to.be.equal(1)
@@ -1255,8 +1253,7 @@ function runTests(accounts, isHome) {
             )
             expect(bridge.address).to.eql('0x32cF26d114e5cCEc96B0666185d72a2F32D6A685')
             await tokenFactoryERC721.transferOwnership(owner, { from: user3 })
-            await tokenFactoryERC721.setBridge(bridge.address)
-            await tokenFactoryERC721.setOppositeBridge(oppositeBridge)
+
             if (isHome) {
               await bridge.initialize(
                 ambBridgeContract.address,

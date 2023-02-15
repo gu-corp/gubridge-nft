@@ -53,32 +53,16 @@ contract ERC721TokenFactory is Initializable, Upgradeable, Ownable {
     return addressStorage[ERC721_TOKEN_BRIDGE_IMAGE_CONTRACT];
   }
 
-  function setERC721BridgeImage(address erc721BridgeImage_) public onlyOwner {
-    _setERC721BridgeImage(erc721BridgeImage_);
-  }
-
   function erc721NativeImage() public view returns (address) {
     return addressStorage[ERC721_TOKEN_NATIVE_IMAGE_CONTRACT];
-  }
-
-  function setERC721NativeImage(address erc721NativeImage_) public onlyOwner {
-    _setERC721NativeImage(erc721NativeImage_);
   }
 
   function bridge() public view returns (address) {
     return addressStorage[BRIDGE_CONTRACT];
   }
 
-  function setBridge(address bridge_) public onlyOwner {
-    _setBridge(bridge_);
-  }
-
   function oppositeBridge() public view returns (address) {
     return addressStorage[OPPOSITE_BRIDGE_CONTRACT];
-  }
-
-  function setOppositeBridge(address oppositeBridge_) public onlyOwner {
-    _setOppositeBridge(oppositeBridge_);
   }
 
   function nativeTokenOf(uint256 id_) public view returns (address) {
