@@ -12,15 +12,6 @@ contract TokenFactoryStorage is Ownable {
         0x269c5905f777ee6391c7a361d17039a7d62f52ba9fffeb98c5ade342705731a3; // keccak256(abi.encodePacked("tokenFactoryContract"))
 
     /**
-     * @dev Updates address of the used ERC721 token factory.
-     * Only owner can call this method.
-     * @param _factory address of the new token factory.
-     */
-    function setTokenFactoryERC721(address _factory) external onlyOwner {
-        _setTokenFactoryERC721(_factory);
-    }
-
-    /**
      * @dev Tells the address of the used ERC721 token factory.
      * @return address of the used token factory.
      */
