@@ -16,8 +16,10 @@ contract ERC721NativeToken is ERC721 {
 
     constructor(
         string memory _name,
-        string memory _symbol
+        string memory _symbol,
+        address owner_
     ) ERC721(_name, _symbol) {
+        _owner = owner_;
     }
 
     function id() public view returns(uint256) {
@@ -60,6 +62,10 @@ contract ERC721NativeToken is ERC721 {
             interfaceId == INTERFACE_ID_ERC721 ||
             interfaceId == INTERFACE_ID_ERC721_METADATA ||
             interfaceId == INTERFACE_ID_ERC721_ENUMERABLE;
+    }
+
+    function burn(uint256 tokenId) public virtual onlyOwner {
+        _burn(tokenId);
     }
 
     /**

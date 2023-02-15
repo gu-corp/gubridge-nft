@@ -15,7 +15,6 @@ contract('ERC721TokenFactory', (accounts) => {
   let bridge
 
   const owner = accounts[0]
-  const other = accounts[1]
 
   async function initialize(options) {
     const opts = options || {}
@@ -46,7 +45,7 @@ contract('ERC721TokenFactory', (accounts) => {
     // OmnibridgeMock or ForeignNFTOmnibridge is same
     bridge = await OmnibridgeMock.new('SUFFIX')
     tokenBridgeImageERC721 = await ERC721BridgeToken.new('TEST', 'TST', owner)
-    tokenNativeImageERC721 = await ERC721NativeToken.new('TEST', 'TST')
+    tokenNativeImageERC721 = await ERC721NativeToken.new('TEST', 'TST', owner)
   })
 
   beforeEach(async () => {
