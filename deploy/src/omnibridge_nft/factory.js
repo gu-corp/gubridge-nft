@@ -26,7 +26,7 @@ async function deployFactory() {
   let foreignNativeTokenImageERC721 = FOREIGN_ERC721_NATIVE_TOKEN_IMAGE
   if (!foreignNativeTokenImageERC721) {
     console.log('\n[Foreign] Deploying new ERC721 native token image')
-    const nativeImage = await deployContractByFactoryDeploymentAccount(ERC721NativeToken, ['', ''], {
+    const nativeImage = await deployContractByFactoryDeploymentAccount(ERC721NativeToken, ['', '', ZERO_ADDRESS], {
       network: 'foreign',
       nonce: nonceFactoryForeign++,
     })
@@ -70,7 +70,7 @@ async function deployFactory() {
   let homeNativeTokenImageERC721 = HOME_ERC721_NATIVE_TOKEN_IMAGE
   if (!homeNativeTokenImageERC721) {
     console.log('\n[Home] Deploying new ERC721 native token image')
-    const nativeImage = await deployContractByFactoryDeploymentAccount(ERC721NativeToken, ['', ''], {
+    const nativeImage = await deployContractByFactoryDeploymentAccount(ERC721NativeToken, ['', '', ZERO_ADDRESS], {
       network: 'home',
       nonce: nonceFactoryHome++,
     })

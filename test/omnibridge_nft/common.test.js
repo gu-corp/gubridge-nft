@@ -250,7 +250,7 @@ function runTests(accounts, isHome) {
 
   before(async () => {
     tokenBridgeImageERC721 = await ERC721BridgeToken.new('TEST', 'TST', owner)
-    tokenNativeImageERC721 = await ERC721NativeToken.new('TEST', 'TST')
+    tokenNativeImageERC721 = await ERC721NativeToken.new('TEST', 'TST', owner)
     tokenImageERC1155 = await ERC1155BridgeToken.new('TEST', 'TST', owner)
   })
 
@@ -1234,7 +1234,7 @@ function runTests(accounts, isHome) {
             // Execute at opposite chain
             const computeCreate2AddrSourceChain = '0x2E56870889CBa2837c234408634d02a502A488D8'
             // CREATE opcode same address
-            const tokenNativeImageERC721 = await ERC721NativeToken.new('TEST', 'TST', { from: user3 })
+            const tokenNativeImageERC721 = await ERC721NativeToken.new('TEST', 'TST', owner, { from: user3 })
             expect(tokenNativeImageERC721.address).to.eql('0x9Ad61E35f8309aF944136283157FABCc5AD371E5')
             const tokenBridgeImageERC721 = await ERC721BridgeToken.new('TEST', 'TST', owner, { from: user3 })
             expect(tokenBridgeImageERC721.address).to.eql('0xc0bAC7B9a8c62778bBBad8BB859FDb8E9eA6203A')
