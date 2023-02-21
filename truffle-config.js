@@ -1,3 +1,14 @@
+const mochaOptions =
+  process.env.GASREPORT === 'true'
+    ? {
+        reporter: 'eth-gas-reporter',
+        reporterOptions: {
+          currency: 'USD',
+          gasPrice: 1,
+        },
+      }
+    : {}
+
 module.exports = {
   contracts_build_directory: './build/contracts',
   networks: {
@@ -30,4 +41,5 @@ module.exports = {
   api_keys: {
     etherscan: process.env.VERIFICATION_ETHERSCAN_API_KEY,
   },
+  mocha: mochaOptions,
 }
