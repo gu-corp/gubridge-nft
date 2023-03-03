@@ -12,8 +12,6 @@ contract ERC721TokenFactory is Initializable, Upgradeable, Ownable {
   event ERC721NativeContractCreated(address indexed _collection);
   event ERC721BridgeContractCreated(address indexed _collection);
 
-  bytes32 internal constant ERC721_TOKEN_BRIDGE_IMAGE_CONTRACT =
-    0x6aad256926877203e89d1aabd3c123bafa04b2c16f96dbd769d5c99fe3c51eb1; // keccak256(abi.encodePacked("tokenBridgeImageContract"))
   bytes32 internal constant ERC721_TOKEN_NATIVE_IMAGE_CONTRACT =
     0x02d5fe70e145b5080c327371a50b630311beed4bc3e8d113faae24c37a9a0eb5; // keccak256(abi.encodePacked("tokenNativeImageContract"))
   bytes32 internal constant BRIDGE_CONTRACT =
@@ -24,12 +22,11 @@ contract ERC721TokenFactory is Initializable, Upgradeable, Ownable {
     0xbe093699e7df0bed5814a55556d286cd5307e86409f33918b4e10a236fcdae16; // keccak256(abi.encodePacked("idCounter"))
 
   modifier onlyBridge() {
-    require(msg.sender == addressStorage[BRIDGE_CONTRACT]);
+    require(msg.sender == bridge());
     _;
   } 
   
   function initialize(
-      address erc721BridgeImage_,
       address erc721NativeImage_,
       address bridge_,
       address oppositeBridge_,
@@ -37,7 +34,6 @@ contract ERC721TokenFactory is Initializable, Upgradeable, Ownable {
   ) external onlyRelevantSender returns (bool) {
       require(!isInitialized());
 
-      _setERC721BridgeImage(erc721BridgeImage_);
       _setERC721NativeImage(erc721NativeImage_);
       _setBridge(bridge_);
       _setOppositeBridge(oppositeBridge_);
@@ -46,11 +42,6 @@ contract ERC721TokenFactory is Initializable, Upgradeable, Ownable {
       setInitialize();
 
       return isInitialized();
-  }
-  
-
-  function erc721BridgeImage() public view returns (address) {
-    return addressStorage[ERC721_TOKEN_BRIDGE_IMAGE_CONTRACT];
   }
 
   function erc721NativeImage() public view returns (address) {
@@ -69,23 +60,28 @@ contract ERC721TokenFactory is Initializable, Upgradeable, Ownable {
     return addressStorage[keccak256(abi.encodePacked("nativeTokens", id_))];
   }
 
+  function setERC721NativeImage(address erc721NativeImage_) external onlyOwner {
+    _setERC721NativeImage(erc721NativeImage_);
+  }
+
   function deployERC721BridgeContract(
     string memory _name,
     string memory _symbol,
     uint256 _collectionId,
-    address owner_
+    address _owner,
+    address _image
   ) external onlyBridge returns(address) {
-    require(addressStorage[ERC721_TOKEN_BRIDGE_IMAGE_CONTRACT] != address(0));
+    require(Address.isContract(_image));
 
     bytes32 _salt = keccak256(abi.encodePacked(_collectionId));
     address collection = address(new ERC721TokenProxy{salt: _salt}(
-      addressStorage[ERC721_TOKEN_BRIDGE_IMAGE_CONTRACT],
+      _image,
       _name,
       _symbol,
-      addressStorage[BRIDGE_CONTRACT],
+      bridge(),
       address(this),
       _collectionId,
-      owner_
+      _owner
     ));
 
     emit ERC721BridgeContractCreated(collection);
@@ -115,11 +111,6 @@ contract ERC721TokenFactory is Initializable, Upgradeable, Ownable {
     addressStorage[keccak256(abi.encodePacked("nativeTokens", _collectionId))] = collection;
     emit ERC721NativeContractCreated(collection);
     return collection;
-  }
-
-  function _setERC721BridgeImage(address erc721BridgeImage_) internal {
-    require(Address.isContract(erc721BridgeImage_));
-    addressStorage[ERC721_TOKEN_BRIDGE_IMAGE_CONTRACT] = erc721BridgeImage_;
   }
 
   function _setERC721NativeImage(address erc721NativeImage_) internal {

@@ -15,11 +15,11 @@ contract('ERC721TokenFactory', (accounts) => {
   let bridge
 
   const owner = accounts[0]
+  const other = accounts[1]
 
   async function initialize(options) {
     const opts = options || {}
     const args = [
-      opts.erc721BridgeImage || tokenBridgeImageERC721.address,
       opts.erc721NativeImage || tokenNativeImageERC721.address,
       opts.bridge || bridge.address,
       opts.oppositeBridge || oppositeBridge,
@@ -56,7 +56,6 @@ contract('ERC721TokenFactory', (accounts) => {
     it('should initialize parameters', async () => {
       // Given
       expect(await tokenFactoryERC721.isInitialized()).to.be.equal(false)
-      expect(await tokenFactoryERC721.erc721BridgeImage()).to.be.equal(ZERO_ADDRESS)
       expect(await tokenFactoryERC721.erc721NativeImage()).to.be.equal(ZERO_ADDRESS)
       expect(await tokenFactoryERC721.bridge()).to.be.equal(ZERO_ADDRESS)
       expect(await tokenFactoryERC721.oppositeBridge()).to.be.equal(ZERO_ADDRESS)
@@ -64,7 +63,6 @@ contract('ERC721TokenFactory', (accounts) => {
 
       // When
       // not valid bridge address
-      await initialize({ erc721BridgeImage: ZERO_ADDRESS }).should.be.rejected
       await initialize({ erc721NativeImage: ZERO_ADDRESS }).should.be.rejected
       await initialize({ bridge: ZERO_ADDRESS }).should.be.rejected
       await initialize({ owner: ZERO_ADDRESS }).should.be.rejected
@@ -76,7 +74,6 @@ contract('ERC721TokenFactory', (accounts) => {
 
       // Then
       expect(await tokenFactoryERC721.isInitialized()).to.be.equal(true)
-      expect(await tokenFactoryERC721.erc721BridgeImage()).to.be.equal(tokenBridgeImageERC721.address)
       expect(await tokenFactoryERC721.erc721NativeImage()).to.be.equal(tokenNativeImageERC721.address)
       expect(await tokenFactoryERC721.bridge()).to.be.equal(bridge.address)
       expect(await tokenFactoryERC721.oppositeBridge()).to.be.equal(oppositeBridge)
@@ -100,7 +97,14 @@ contract('ERC721TokenFactory', (accounts) => {
 
     describe('deployERC721BridgeContract', () => {
       it('should allow bridge deploy bridged contract', async () => {
-        await bridge.deployERC721BridgeToken(tokenFactoryERC721.address, 'TEST', 'TST', 0, owner)
+        await bridge.deployERC721BridgeToken(
+          tokenFactoryERC721.address,
+          'TEST',
+          'TST',
+          0,
+          owner,
+          tokenBridgeImageERC721.address
+        )
         const event = await getEvents(tokenFactoryERC721, { event: 'ERC721BridgeContractCreated' })
         // eslint-disable-next-line no-underscore-dangle
         const collection = event[event.length - 1].returnValues._collection
@@ -108,7 +112,24 @@ contract('ERC721TokenFactory', (accounts) => {
       })
 
       it('should not allow not bridge deploy bridged contract', async () => {
-        await tokenFactoryERC721.deployERC721BridgeContract('TEST', 'TST', 0, owner, { from: owner }).should.be.rejected
+        await tokenFactoryERC721.deployERC721BridgeContract('TEST', 'TST', 0, owner, tokenBridgeImageERC721.address, {
+          from: owner,
+        }).should.be.rejected
+      })
+    })
+
+    describe('setERC721NativeImage', () => {
+      it('should allow owner deploy bridged contract', async () => {
+        const newTokenNativeImageERC721 = await ERC721NativeToken.new('TEST', 'TST', owner)
+        await tokenFactoryERC721.setERC721NativeImage(newTokenNativeImageERC721.address)
+        expect(await tokenFactoryERC721.erc721NativeImage()).to.eql(newTokenNativeImageERC721.address)
+      })
+
+      it('should not allow not owner deploy bridged contract', async () => {
+        const newTokenNativeImageERC721 = await ERC721NativeToken.new('TEST', 'TST', owner)
+        await tokenFactoryERC721.setERC721NativeImage(newTokenNativeImageERC721.address, {
+          from: other,
+        }).should.be.rejected
       })
     })
   })

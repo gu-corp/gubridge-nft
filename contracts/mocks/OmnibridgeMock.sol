@@ -8,8 +8,9 @@ contract OmnibridgeMock {
     string memory _name,
     string memory _symbol,
     uint256 _id,
-    address owner_
+    address _owner,
+    address _image
   ) public {
-    IERC721TokenFactory(_factory).deployERC721BridgeContract(_name, _symbol, _id, owner_);
+    IERC721TokenFactory(_factory).deployERC721BridgeContract(_name, _symbol, _id, _owner, _image);
   }
 }

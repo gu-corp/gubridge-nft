@@ -5,7 +5,8 @@ interface IERC721TokenFactory {
         string memory _name,
         string memory _symbol,
         uint256 _id,
-        address owner_
+        address _owner,
+        address _image
     ) external returns (address);
 
     function nativeTokenOf(uint256 id_) external view returns (address);

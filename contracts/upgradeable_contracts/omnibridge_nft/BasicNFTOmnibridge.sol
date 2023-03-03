@@ -48,7 +48,13 @@ abstract contract BasicNFTOmnibridge is
     uint256 private immutable SUFFIX_SIZE;
     bytes32 private immutable SUFFIX;
 
-    // Since contract is intended to be deployed under EternalStorageProxy, only constant and immutable variables can be set here
+    // Workaround for error: Stack too deep, try removing local variables function deployAndHandleBridgedNFT too many args
+    struct GUERC721TokenDeployParams {
+        uint256 id;
+        address owner;
+        address image;
+    }
+    // Since contract is intended to be deployed under EternalStorageProxy, only constant and immutable variables can be set here 
     constructor(string memory _suffix) {
         require(bytes(_suffix).length <= 32);
         bytes32 suffix;
@@ -86,8 +92,7 @@ abstract contract BasicNFTOmnibridge is
         uint256[] calldata _tokenIds,
         uint256[] calldata _values,
         string[] calldata _tokenURIs,
-        uint256 _id,
-        address owner_
+        GUERC721TokenDeployParams calldata params
     ) external onlyMediator {
         address bridgedToken = bridgedTokenAddress(_token);
 
@@ -95,9 +100,9 @@ abstract contract BasicNFTOmnibridge is
             if ( _values.length > 0) {
                 bridgedToken = address(new ERC1155TokenProxy(tokenImageERC1155(), _name, _symbol, address(this)));
             } else {
-                require(_isDeployBridgedNFTAllowed(owner_), "GUBridge: Not allow sender deploy bridge collection");
+                require(_isDeployBridgedNFTAllowed(params.owner), "GUBridge: Not allow sender deploy bridge collection");
                 address _factory = tokenFactoryERC721();
-                bridgedToken = IERC721TokenFactory(_factory).deployERC721BridgeContract(_name, _symbol, _id, owner_);
+                bridgedToken = IERC721TokenFactory(_factory).deployERC721BridgeContract(_name, _symbol, params.id, params.owner, params.image);
             }
             _setTokenAddressPair(_token, bridgedToken);
         }
@@ -301,10 +306,13 @@ abstract contract BasicNFTOmnibridge is
 
             string memory name = _readName(_token);
             string memory symbol = _readSymbol(_token);
-            uint256 _id = _readId(_token);
-            address _owner = _readOwner(_token);
 
-            require(_isIssueByFactory(_token, _id, _values.length > 0), "GUBridge: Token must issued by factory able to bridge");
+            GUERC721TokenDeployParams memory params;
+            params.id = _readId(_token);
+            params.owner = _readOwner(_token);
+            params.image = _readImage(_token);
+
+            require(_isIssueByFactory(_token, params.id, _values.length > 0), "GUBridge: Token must issued by factory able to bridge");
             return
                 abi.encodeWithSelector(
                     this.deployAndHandleBridgedNFT.selector,
@@ -315,8 +323,7 @@ abstract contract BasicNFTOmnibridge is
                     _tokenIds,
                     _values,
                     tokenURIs,
-                    _id,
-                    _owner
+                    params
                 );
         }
 

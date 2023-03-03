@@ -63,6 +63,12 @@ contract MetadataReader is Ownable {
         return status ? abi.decode(data, (address)) : tx.origin;
     }
 
+    function _readImage(address _token) internal view returns (address) {
+        (bool status, bytes memory data) = _token.staticcall(abi.encodeWithSelector(IGUERC721Metadata.implementation.selector));
+
+        return status ? abi.decode(data, (address)) : address(0);
+    }
+
     /**
      * @dev Internal function for reading ERC721 token URI.
      * @param _token address of the ERC721 token contract.

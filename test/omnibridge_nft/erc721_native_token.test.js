@@ -5,7 +5,7 @@ const ERC721NativeToken = artifacts.require('ERC721NativeToken')
 
 const uriFor = (tokenId) => `https://example.com/${tokenId}`
 
-contract.only('ERC721NativeToken', (accounts) => {
+contract('ERC721NativeToken', (accounts) => {
   let token
 
   const owner = accounts[0]
