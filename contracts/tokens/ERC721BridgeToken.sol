@@ -14,8 +14,8 @@ contract ERC721BridgeToken is ERC721, IBurnableMintableERC721Token {
     using Counters for Counters.Counter;
 
     address public bridgeContract;
-    address public _factory;
-    uint256 private _id;
+    address private _factory;
+    bytes32 private _salt;
     address private _owner;
     Counters.Counter private _tokenIdCounter;
 
@@ -26,11 +26,6 @@ contract ERC721BridgeToken is ERC721, IBurnableMintableERC721Token {
     ) ERC721(_name, _symbol) {
         bridgeContract = _bridgeContract;
     }
-
-    function id() public view returns(uint256) {
-        return _id;
-    }
-
     /**
      * @dev Throws if sender is not a bridge contract.
      */
@@ -45,6 +40,18 @@ contract ERC721BridgeToken is ERC721, IBurnableMintableERC721Token {
     modifier onlyOwner() {
         require(msg.sender == bridgeContract || msg.sender == IOwnable(bridgeContract).owner());
         _;
+    }
+
+    function salt() public view returns(bytes32) {
+        return _salt;
+    }
+
+    function factory () public view returns (address) {
+        return _factory;
+    }
+
+    function owner() public view returns (address) {
+        return _owner;
     }
 
     /**

@@ -50,10 +50,10 @@ contract MetadataReader is Ownable {
         return status ? abi.decode(data, (string)) : stringStorage[keccak256(abi.encodePacked("customSymbol", _token))];
     }
 
-    function _readId(address _token) internal view returns (uint256) {
-        (bool status, bytes memory data) = _token.staticcall(abi.encodeWithSelector(IGUERC721Metadata.id.selector));
+    function _readSalt(address _token) internal view returns (bytes32) {
+        (bool status, bytes memory data) = _token.staticcall(abi.encodeWithSelector(IGUERC721Metadata.salt.selector));
 
-        return status ? abi.decode(data, (uint256)) : 0;
+        return status ? abi.decode(data, (bytes32)) : keccak256(abi.encodePacked(""));
     }
 
     function _readOwner(address _token) internal view returns (address) {

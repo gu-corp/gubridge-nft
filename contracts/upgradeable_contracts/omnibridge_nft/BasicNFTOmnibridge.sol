@@ -86,7 +86,7 @@ abstract contract BasicNFTOmnibridge is
         uint256[] calldata _tokenIds,
         uint256[] calldata _values,
         string[] calldata _tokenURIs,
-        uint256 _id,
+        bytes32 _salt,
         address owner_
     ) external onlyMediator {
         address bridgedToken = bridgedTokenAddress(_token);
@@ -97,7 +97,7 @@ abstract contract BasicNFTOmnibridge is
             } else {
                 require(_isDeployBridgedNFTAllowed(owner_), "GUBridge: Not allow sender deploy bridge collection");
                 address _factory = tokenFactoryERC721();
-                bridgedToken = IERC721TokenFactory(_factory).deployERC721BridgeContract(_name, _symbol, _id, owner_);
+                bridgedToken = IERC721TokenFactory(_factory).deployERC721BridgeContract(_name, _symbol, _salt, owner_);
             }
             _setTokenAddressPair(_token, bridgedToken);
         }
@@ -301,10 +301,10 @@ abstract contract BasicNFTOmnibridge is
 
             string memory name = _readName(_token);
             string memory symbol = _readSymbol(_token);
-            uint256 _id = _readId(_token);
+            bytes32 _salt = _readSalt(_token);
             address _owner = _readOwner(_token);
 
-            require(_isIssueByFactory(_token, _id, _values.length > 0), "GUBridge: Token must issued by factory able to bridge");
+            require(_isIssueByFactory(_token, _salt, _values.length > 0), "GUBridge: Token must issued by factory able to bridge");
             return
                 abi.encodeWithSelector(
                     this.deployAndHandleBridgedNFT.selector,
@@ -315,7 +315,7 @@ abstract contract BasicNFTOmnibridge is
                     _tokenIds,
                     _values,
                     tokenURIs,
-                    _id,
+                    _salt,
                     _owner
                 );
         }
@@ -486,13 +486,13 @@ abstract contract BasicNFTOmnibridge is
         return true;
     }
 
-    function _isIssueByFactory(address _token, uint256 _id, bool _isERC1155) internal view virtual returns (bool) {
+    function _isIssueByFactory(address _token, bytes32 _salt, bool _isERC1155) internal view virtual returns (bool) {
         // skip if erc1155
         if (_isERC1155) {
             return true;
         }
         address _factory = tokenFactoryERC721();
-        address nativeToken = IERC721TokenFactory(_factory).nativeTokenOf(_id);
+        address nativeToken = IERC721TokenFactory(_factory).nativeTokenOf(_salt);
 
         return nativeToken == _token;
     }

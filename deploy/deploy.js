@@ -60,7 +60,6 @@ async function deployOmnibridgeNFT() {
   await initializeTokenFactoryForeign({
     factory: foreignTokenFactory.address,
     bridge: foreignBridgeMediator.address,
-    oppositeBridge: homeBridgeMediator.address,
     erc721BridgeImage: foreignBridgeTokenImageERC721.address,
     erc721NativeImage: foreignNativeTokenImageERC721.address,
   })
@@ -68,7 +67,6 @@ async function deployOmnibridgeNFT() {
   await initializeTokenFactoryHome({
     factory: homeTokenFactory.address,
     bridge: homeBridgeMediator.address,
-    oppositeBridge: foreignBridgeMediator.address,
     erc721BridgeImage: homeBridgeTokenImageERC721.address,
     erc721NativeImage: homeNativeTokenImageERC721.address,
   })

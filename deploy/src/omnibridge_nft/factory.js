@@ -26,9 +26,9 @@ async function deployFactory() {
   let foreignNativeTokenImageERC721 = FOREIGN_ERC721_NATIVE_TOKEN_IMAGE
   if (!foreignNativeTokenImageERC721) {
     console.log('\n[Foreign] Deploying new ERC721 native token image')
-    const nativeImage = await deployContractByFactoryDeploymentAccount(ERC721NativeToken, ['', '', ZERO_ADDRESS], {
+    const nativeImage = await deployContract(ERC721NativeToken, ['', '', ZERO_ADDRESS], {
       network: 'foreign',
-      nonce: nonceFactoryForeign++,
+      nonce: nonceForeign++,
     })
     foreignNativeTokenImageERC721 = nativeImage.options.address
     console.log('\n[Foreign] New ERC721 token native image has been deployed: ', foreignNativeTokenImageERC721)
@@ -39,9 +39,9 @@ async function deployFactory() {
   let homeBridgeTokenImageERC721 = HOME_ERC721_BRIDGE_TOKEN_IMAGE
   if (!homeBridgeTokenImageERC721) {
     console.log('\n[Home] Deploying new ERC721 bridge token image')
-    const bridgeImage = await deployContractByFactoryDeploymentAccount(ERC721BridgeToken, ['', '', ZERO_ADDRESS], {
+    const bridgeImage = await deployContract(ERC721BridgeToken, ['', '', ZERO_ADDRESS], {
       network: 'home',
-      nonce: nonceFactoryHome++,
+      nonce: nonceHome++,
     })
     homeBridgeTokenImageERC721 = bridgeImage.options.address
     console.log('\n[Home] New ERC721 token bridge image has been deployed: ', homeBridgeTokenImageERC721)
@@ -49,17 +49,13 @@ async function deployFactory() {
     console.log('\n[Home] Using existing ERC721 bridge token image: ', homeBridgeTokenImageERC721)
   }
 
-  if (foreignNativeTokenImageERC721 !== homeBridgeTokenImageERC721) {
-    throw new Error('foreignNativeTokenImageERC721 should equals homeBridgeTokenImageERC721')
-  }
-
   // 2.
   let foreignBridgeTokenImageERC721 = FOREIGN_ERC721_BRIDGE_TOKEN_IMAGE
   if (!foreignBridgeTokenImageERC721) {
     console.log('\n[Foreign] Deploying new ERC721 bridge token image')
-    const bridgeImage = await deployContractByFactoryDeploymentAccount(ERC721BridgeToken, ['', '', ZERO_ADDRESS], {
+    const bridgeImage = await deployContract(ERC721BridgeToken, ['', '', ZERO_ADDRESS], {
       network: 'foreign',
-      nonce: nonceFactoryForeign++,
+      nonce: nonceForeign++,
     })
     foreignBridgeTokenImageERC721 = bridgeImage.options.address
     console.log('\n[Foreign] New ERC721 token bridge image has been deployed: ', foreignBridgeTokenImageERC721)
@@ -70,18 +66,14 @@ async function deployFactory() {
   let homeNativeTokenImageERC721 = HOME_ERC721_NATIVE_TOKEN_IMAGE
   if (!homeNativeTokenImageERC721) {
     console.log('\n[Home] Deploying new ERC721 native token image')
-    const nativeImage = await deployContractByFactoryDeploymentAccount(ERC721NativeToken, ['', '', ZERO_ADDRESS], {
+    const nativeImage = await deployContract(ERC721NativeToken, ['', '', ZERO_ADDRESS], {
       network: 'home',
-      nonce: nonceFactoryHome++,
+      nonce: nonceHome++,
     })
     homeNativeTokenImageERC721 = nativeImage.options.address
     console.log('\n[Home] New ERC721 token native image has been deployed: ', homeNativeTokenImageERC721)
   } else {
     console.log('\n[Home] Using existing ERC721 native token image: ', homeNativeTokenImageERC721)
-  }
-
-  if (foreignBridgeTokenImageERC721 !== homeNativeTokenImageERC721) {
-    throw new Error('foreignBridgeTokenImageERC721 should equals homeNativeTokenImageERC721')
   }
 
   // 3

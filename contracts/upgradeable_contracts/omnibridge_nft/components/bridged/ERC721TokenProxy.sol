@@ -25,20 +25,36 @@ contract ERC721TokenProxy is Proxy {
     mapping(uint256 => string) private _tokenURIs;
     string private _baseURI;
     address private bridgeContract;
+
     address private _factory;
-    uint256 private _id;
+    bytes32 private _salt;
+    // ownable
     address private _owner;
+    // support incremental tokenId
     uint256 private _tokenIdCounter;
+    bool private _isInitialized;
 
     constructor(
+        address factory_
+    ) {
+        _factory = factory_;
+    }
+
+    modifier onlyFactory() {
+        require(msg.sender == _factory);
+        _;
+    }
+
+    function initialize(
         address _tokenImage,
         string memory _name,
         string memory _symbol,
         address _bridge,
-        address factory_,
-        uint256 id_,
+        bytes32 salt_,
         address owner_
-    ) {
+    ) external onlyFactory returns (bool) {
+        require(!isInitialized());
+
         assembly {
             // EIP 1967
             // bytes32(uint256(keccak256('eip1967.proxy.implementation')) - 1)
@@ -47,9 +63,12 @@ contract ERC721TokenProxy is Proxy {
         name = _name;
         symbol = _symbol;
         bridgeContract = _bridge; // _owner == HomeOmnibridgeNFT/ForeignOmnibridgeNFT mediator
-        _factory = factory_;
-        _id = id_;
+        _salt = salt_;
         _owner = owner_;
+
+        setInitialize();
+
+        return isInitialized();
     }
 
     /**
@@ -91,5 +110,13 @@ contract ERC721TokenProxy is Proxy {
         )
     {
         return (1, 0, 0);
+    }
+
+    function setInitialize() internal {
+        _isInitialized = true;
+    }
+
+    function isInitialized() public view returns (bool) {
+        return _isInitialized;
     }
 }
