@@ -10,7 +10,7 @@ contract ERC721NativeToken is ERC721 {
 
     address private bridgeContract;
     address private _factory;
-    uint256 private _id;
+    bytes32 private _salt;
     address private _owner;
     Counters.Counter private _tokenIdCounter;
 
@@ -22,8 +22,8 @@ contract ERC721NativeToken is ERC721 {
         _owner = owner_;
     }
 
-    function id() public view returns(uint256) {
-        return _id;
+    function salt() public view returns(bytes32) {
+        return _salt;
     }
 
     modifier onlyOwner() {

@@ -3,23 +3,19 @@ const { sendRawTxForeign, sendRawTxHome, transferProxyOwnership } = require('../
 const { ERC721TokenFactory, EternalStorageProxy } = require('../loadContracts')
 const { FOREIGN_UPGRADEABLE_ADMIN, HOME_UPGRADEABLE_ADMIN } = require('../loadEnv')
 
-function initializeERC721TokenFactory({
-  contract,
-  params: { erc721BridgeImage, erc721NativeImage, bridge, oppositeBridge, owner },
-}) {
+function initializeERC721TokenFactory({ contract, params: { erc721BridgeImage, erc721NativeImage, bridge, owner } }) {
   console.log(`
     ERC721 BRIDGE IMAGE CONTRACT: ${erc721BridgeImage},
     ERC721 NATIVE IMAGE CONTRACT: ${erc721NativeImage},
     BRIDGE: ${bridge},
-    OPPOSITE BRIDGE : ${oppositeBridge},
     OWNER: ${owner}`)
 
-  return contract.methods.initialize(erc721BridgeImage, erc721NativeImage, bridge, oppositeBridge, owner).encodeABI()
+  return contract.methods.initialize(erc721BridgeImage, erc721NativeImage, bridge, owner).encodeABI()
 }
 
 const { HOME_TOKEN_FACTORY_OWNER, FOREIGN_TOKEN_FACTORY_OWNER } = require('../loadEnv')
 
-async function initializeForeign({ factory, erc721BridgeImage, erc721NativeImage, bridge, oppositeBridge }) {
+async function initializeForeign({ factory, erc721BridgeImage, erc721NativeImage, bridge }) {
   let nonce = await web3Foreign.eth.getTransactionCount(deploymentFactoryAddress)
   const contract = new web3Foreign.eth.Contract(ERC721TokenFactory.abi, factory)
 
@@ -31,7 +27,6 @@ async function initializeForeign({ factory, erc721BridgeImage, erc721NativeImage
       erc721BridgeImage,
       erc721NativeImage,
       bridge,
-      oppositeBridge,
       owner: FOREIGN_TOKEN_FACTORY_OWNER,
     },
   })
@@ -54,7 +49,7 @@ async function initializeForeign({ factory, erc721BridgeImage, erc721NativeImage
   })
 }
 
-async function initializeHome({ factory, erc721BridgeImage, erc721NativeImage, bridge, oppositeBridge }) {
+async function initializeHome({ factory, erc721BridgeImage, erc721NativeImage, bridge }) {
   let nonce = await web3Home.eth.getTransactionCount(deploymentFactoryAddress)
   const contract = new web3Home.eth.Contract(ERC721TokenFactory.abi, factory)
 
@@ -66,7 +61,6 @@ async function initializeHome({ factory, erc721BridgeImage, erc721NativeImage, b
       erc721BridgeImage,
       erc721NativeImage,
       bridge,
-      oppositeBridge,
       owner: HOME_TOKEN_FACTORY_OWNER,
     },
   })
