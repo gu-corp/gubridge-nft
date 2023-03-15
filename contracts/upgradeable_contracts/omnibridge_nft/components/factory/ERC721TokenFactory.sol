@@ -101,20 +101,20 @@ contract ERC721TokenFactory is Initializable, Upgradeable, Ownable {
   ) external returns(address) {
     require(erc721NativeImage() != address(0));
 
-    uint256 _collectionId = uintStorage[ID_COUNTER];
+    uint256 _idCounter = uintStorage[ID_COUNTER];
     uintStorage[ID_COUNTER] += 1;
 
     // salt = incremental + chainId
     // incremental make every single collection different address
     // chainId make single network different address
-    bytes32 _salt = keccak256(abi.encodePacked(_collectionId, chainId()));
+    bytes32 _salt = keccak256(abi.encodePacked(_idCounter, chainId()));
     ERC721TokenProxy proxy = new ERC721TokenProxy{salt: _salt}(address(this));
 
     proxy.initialize(
       erc721NativeImage(),
       _name,
       _symbol,
-      address(0), // nativeToken not depend on bridge contract,
+      address(0), // nativeToken not depend on bridge contract
       _salt,
       msg.sender
     );

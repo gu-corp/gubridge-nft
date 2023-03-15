@@ -1278,7 +1278,7 @@ function runTests(accounts, isHome) {
                 [1],
                 [],
                 [uriFor(1)],
-                web3.utils.soliditySha3(0, 1), // collectionId = 0, chainId = 1
+                web3.utils.soliditySha3(0, 1), // idCounter = 0, chainId = 1
                 owner
               )
               .encodeABI()
