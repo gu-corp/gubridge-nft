@@ -18,7 +18,8 @@ contract ERC721BridgeToken is ERC721, IBurnableMintableERC721Token {
     uint256 private _id;
     address private _owner;
     Counters.Counter private _tokenIdCounter;
-
+    address private _minter;
+    
     constructor(
         string memory _name,
         string memory _symbol,

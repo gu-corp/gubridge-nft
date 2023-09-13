@@ -13,6 +13,7 @@ contract ERC721NativeToken is ERC721 {
     uint256 private _id;
     address private _owner;
     Counters.Counter private _tokenIdCounter;
+    address private _minter;
 
     constructor(
         string memory _name,
@@ -31,6 +32,10 @@ contract ERC721NativeToken is ERC721 {
         _;
     }
 
+    function minter() public view returns (address) {
+        return _minter;
+    }
+
     function owner() public view returns (address) {
         return _owner;
     }
@@ -39,7 +44,8 @@ contract ERC721NativeToken is ERC721 {
         return _factory;
     }
 
-    function mint(address _to, string memory _uri) external onlyOwner {
+    function mint(address _to, string memory _uri) external {
+        require(msg.sender == _owner || msg.sender == _minter);
         _tokenIdCounter.increment();
         uint256 _tokenId = _tokenIdCounter.current();
 
@@ -66,6 +72,10 @@ contract ERC721NativeToken is ERC721 {
 
     function burn(uint256 tokenId) public virtual onlyOwner {
         _burn(tokenId);
+    }
+
+    function setMinter(address minter_) public onlyOwner {
+        _minter = minter_;
     }
 
     /**

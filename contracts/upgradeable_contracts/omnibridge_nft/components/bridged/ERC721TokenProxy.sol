@@ -29,6 +29,7 @@ contract ERC721TokenProxy is Proxy {
     uint256 private _id;
     address private _owner;
     uint256 private _tokenIdCounter;
+    address private _minter;
 
     constructor(
         address _tokenImage,
